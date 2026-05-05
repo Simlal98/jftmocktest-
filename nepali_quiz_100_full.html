@@ -1,0 +1,300 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+#qapp{padding:1rem 0;font-family:var(--font-sans)}
+.hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;gap:8px;flex-wrap:wrap}
+.scorelbl{font-size:13px;color:var(--color-text-secondary);font-weight:500}
+.dbtn{background:var(--color-background-secondary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:5px 10px;cursor:pointer;font-size:12px;color:var(--color-text-secondary)}
+.dbtn:hover{background:var(--color-background-tertiary)}
+.pbar{width:100%;height:4px;background:var(--color-background-secondary);border-radius:2px;margin-bottom:1rem;overflow:hidden}
+.pfill{height:100%;background:#1D9E75;border-radius:2px;transition:width 0.4s ease}
+.trow{display:flex;align-items:center;gap:10px;margin-bottom:1rem}
+.tsvg{width:44px;height:44px;flex-shrink:0}
+.tmeta{flex:1}
+.tnum-lbl{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+.tsub{font-size:12px;color:var(--color-text-secondary)}
+.qlbl{font-size:12px;color:var(--color-text-secondary);margin-bottom:6px}
+.qtxt{font-size:15px;font-weight:500;color:var(--color-text-primary);line-height:1.65;margin-bottom:1rem}
+.opts{display:flex;flex-direction:column;gap:8px}
+.obtn{background:var(--color-background-primary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-lg);padding:11px 14px;cursor:pointer;text-align:left;font-size:13px;color:var(--color-text-primary);transition:border-color .15s,background .15s;display:flex;align-items:center;gap:10px}
+.obtn:hover:not(:disabled){background:var(--color-background-secondary);border-color:var(--color-border-primary)}
+.obtn:disabled{cursor:default}
+.obtn.correct{border-color:#1D9E75!important;background:#E1F5EE!important;color:#085041!important}
+.obtn.wrong{border-color:#D85A30!important;background:#FAECE7!important;color:#4A1B0C!important}
+.olbl{width:22px;height:22px;min-width:22px;border-radius:50%;border:0.5px solid var(--color-border-secondary);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:var(--color-text-secondary)}
+.obtn.correct .olbl{background:#1D9E75;border-color:#1D9E75;color:#fff}
+.obtn.wrong .olbl{background:#D85A30;border-color:#D85A30;color:#fff}
+.fb{margin-top:.75rem;padding:10px 14px;border-radius:var(--border-radius-md);font-size:13px;font-weight:500;opacity:0;transition:opacity .3s;min-height:38px}
+.fb.show{opacity:1}
+.fb.ok{background:#E1F5EE;color:#085041;border:0.5px solid #5DCAA5}
+.fb.ng{background:#FAECE7;color:#4A1B0C;border:0.5px solid #D85A30}
+.fb.to{background:#FAEEDA;color:#412402;border:0.5px solid #EF9F27}
+.nxtbtn{margin-top:.75rem;background:var(--color-background-primary);border:0.5px solid var(--color-border-primary);border-radius:var(--border-radius-md);padding:9px 18px;cursor:pointer;font-size:13px;font-weight:500;color:var(--color-text-primary);display:none}
+.nxtbtn:hover{background:var(--color-background-secondary)}
+.qanim{animation:si .28s ease}
+@keyframes si{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.res{text-align:center;padding:2rem 0}
+.res h2{font-size:20px;font-weight:500;margin-bottom:6px}
+.bigscore{font-size:52px;font-weight:500;color:#1D9E75;margin:.75rem 0}
+.ressub{font-size:13px;color:var(--color-text-secondary);margin-bottom:1.25rem}
+.rbtn{background:var(--color-background-primary);border:0.5px solid var(--color-border-primary);border-radius:var(--border-radius-md);padding:9px 22px;cursor:pointer;font-size:14px;font-weight:500;color:var(--color-text-primary)}
+.rbtn:hover{background:var(--color-background-secondary)}
+.statrow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.25rem}
+.statcard{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.75rem;text-align:center}
+.statval{font-size:20px;font-weight:500;color:var(--color-text-primary)}
+.statlbl{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
+</style>
+<div id="qapp"></div>
+<script>
+const ALL=[
+["बिरुवाको विकासको लागि पोषण अङ्ग कुन हो?",["फूल र फल","पात, डाँठ र जरा","बीउ मात्र"],1],
+["प्रजनन अङ्गको उदाहरण कुन हो?",["जरा","डाँठ","फूल र फल"],2],
+["प्रकाश संश्लेषणको लागि कुन आवश्यक छैन?",["प्रकाश","अक्सिजन","पानी"],1],
+["वाष्पीकरण प्रक्रिया कहाँ हुन्छ?",["जरामा","पातको स्टोमाटाबाट","फलमा"],1],
+["छोटो दिनको आवश्यकता पर्ने बिरुवाको उदाहरण कुन हो?",["पालुङ्गो","गोलभाँडा","गोदावरी"],2],
+["लामो दिनको आवश्यकता पर्ने बिरुवाको उदाहरण कुन हो?",["पालुङ्गो","धान","गहुँ"],0],
+["बीउ अंकुरणको लागि तीन आवश्यक तत्त्व के–के हुन्?",["प्रकाश, तापक्रम, अक्सिजन","पानी, तापक्रम, अक्सिजन","मल, पानी, तापक्रम"],1],
+["प्रकाशमा सजिलै अंकुरण हुने बीउको उदाहरण कुन हो?",["मूला","गाजर","खरबुजा"],1],
+["अँध्यारोमा राम्रो अंकुरण हुने बीउको उदाहरण कुन हो?",["लेटस","गोलभाँडा","तुलसी"],1],
+["सिधै खेतबारीमा बीउ छर्ने विधिलाई के भनिन्छ?",["बेना उमार्ने","सिधै बीउ रोप्ने","ट्रान्सप्लान्ट"],1],
+["पातल्याउने कार्यको उद्देश्य के हो?",["बिरुवालाई पानी दिनु","बिरुवाबीच उचित दूरी बनाउनु","मल हाल्नु"],1],
+["बेना उमार्ने ठाउँलाई के भनिन्छ?",["खेत","नसरी","बारी"],1],
+["बेना रोप्ने कार्यलाई के भनिन्छ?",["बीउ छर्ने","बेना सार्ने (ट्रान्सप्लान्ट)","मल हाल्ने"],1],
+["ट्रान्सप्लान्टर प्रयोग गर्दा के फाइदा हुन्छ?",["ठूलो क्षेत्रमा छोटो समयमा रोप्न सकिन्छ","धेरै खर्चिलो हुन्छ","बिरुवा मर्छन्"],0],
+["हातले बेना सार्दा के फाइदा छ?",["धेरै समय लाग्छ","निश्चित रूपमा रोप्न सकिन्छ र खर्च लाग्दैन","मेसिन चाहिन्छ"],1],
+["सिँचाइको सबैभन्दा साधारण विधि कुन हो?",["थोपा सिँचाइ","फेद सिँचाइ","अभरहेड सिँचाइ"],2],
+["थोपा सिँचाइको मुख्य फाइदा के हो?",["पानीको बचत","धेरै पानी चाहिन्छ","सबै बिरुवा एकै पटक भिज्छन्"],0],
+["मध्य ग्रीष्मको दिउँसो कुन सिँचाइ विधि गर्न हुँदैन?",["थोपा सिँचाइ","फेद सिँचाइ","अभरहेड सिँचाइ"],2],
+["माटोको बनोट निर्धारण गर्न कस्तो विधि प्रयोग गरिन्छ?",["सुँघेर","छोएर (हातले गोलो बनाएर)","रङ हेरेर"],1],
+["जापानको आधा खेतबारीमा पाइने माटोको प्रकार कुन हो?",["ग्ले माटो","एण्डसल (गाढा खैरो)","बालुवा"],1],
+["एकलित दानाको संरचना भएको माटोको विशेषता के हो?",["कडा हुन्छ","हावा र पानीको आवतजावत राम्रो हुन्छ","बिरुवा हुर्किन गाह्रो हुन्छ"],1],
+["माटोको तीन तह (ठोस, तरल, ग्यास) को सन्तुलन राम्रो हुँदा के हुन्छ?",["बिरुवाको विकास राम्रो हुन्छ","बिरुवा मर्छ","पानी जम्मा हुन्छ"],0],
+["माटो खनेर उल्टो पार्ने कार्यलाई के भनिन्छ?",["खनजोत","मल हाल्ने","सिँचाइ"],0],
+["जापानको माटोको pH सामान्यतया कस्तो हुन्छ?",["क्षारीय","अम्लीय","तटस्थ"],1],
+["अम्लीय माटो सुधार गर्न के प्रयोग गरिन्छ?",["यूरिया","चुन वा म्याग्नेसियम चुन","पोटास"],1],
+["धेरै जसो बिरुवाका लागि उपयुक्त pH दायरा कति हो?",["४.०–५.०","५.५–६.५","७.०–८.०"],1],
+["माटोको अम्लीयपना नाप्ने उपकरणको नाम के हो?",["थर्मोमिटर","सोइल एसिडिमिटर (pH मिटर)","टेन्सियोमिटर"],1],
+["लगातार एउटै बिरुवा खेती गर्दा हुने क्षतिलाई के भनिन्छ?",["बाली चक्र","लगातार खेतीको कारण हुने क्षति","बाँझोपन"],1],
+["लगातार खेतीको क्षति नियन्त्रणको लागि सबैभन्दा रुचाइएको उपाय के हो?",["धेरै मल हाल्ने","बाली चक्र","कीटनाशक प्रयोग"],1],
+["बिरुवाको विकासको लागि मलका तीन मुख्य तत्त्व (NPK) के–के हुन्?",["क्याल्सियम, म्याग्नेसियम, सल्फर","नाइट्रोजन, फस्फोरस, पोटासियम","आइरन, कपर, जिंक"],1],
+["नाइट्रोजन (N) को मुख्य काम के हो?",["फूल र फलको विकास","डाँठ र पात लामो बनाई पातको रङ्ग गाढा बनाउनु","जराको विकास"],1],
+["फस्फोरस (P) को मुख्य काम के हो?",["पात हरियो बनाउनु","फूल फुलाउने र फल फलाउने","पानी सोस्ने"],1],
+["रासायनिक मलको फाइदा कति छिटो देखिन्छ?",["धेरै ढिलो","तुरुन्तै","एक वर्ष पछि"],1],
+["प्राङ्गारिक मलको उदाहरण कुन हो?",["यूरिया","माछाको धुलो","सुपरफस्फेट"],1],
+["कम्पोस्ट बनाउन के प्रयोग गरिन्छ?",["प्लास्टिक","गोबर, कुखुराको सूली, रूखको बोक्रा आदि","बालुवा"],1],
+["छिटो लाग्ने मलको उदाहरण कुन हो?",["कम्पोस्ट","झोल मल","हड्डीको धुलो"],1],
+["बिरुवा रोप्नु अगाडि हालिने मललाई के भनिन्छ?",["थप मल","आधार मल","पाते मल"],1],
+["प्याकेजमा '१०-८-८' भन्नको अर्थ के हो?",["N-10%, P-8%, K-8%","N-8%, P-10%, K-8%","N-10%, P-10%, K-8%"],0],
+["धेरै मल हाल्दा माटोमा नुनिलो तत्त्वको मात्रा बढी भई बिरुवालाई हुने क्षतिलाई के भनिन्छ?",["पानीको क्षति","नुनको क्षति","चिसोको क्षति"],1],
+["झाड बनाउने मुख्य उद्देश्य के हो?",["पानी जम्मा गर्नु","पानीको निकास र हावाको आवतजावत राम्रो गर्नु","बीउ छर्नु"],1],
+["टुप्पो चुँड्ने (Pinching) को उद्देश्य के हो?",["फल झार्नु","पोषक तत्त्व सबै पात र फलमा पुर्याउनु","रोग फैलाउनु"],1],
+["अनावश्यक कोपिला, फूल र फल हटाउने कार्यलाई के भनिन्छ?",["हाँगा छाँट्ने","फल पतल्याउने","सिँचाइ"],1],
+["कृत्रिम पराग सेचनको लागि प्रायः कस्तो कीरा प्रयोग गरिन्छ?",["मौरी","कमिला","पुतली"],0],
+["स्ट्रबेरीको पराग सेचनको लागि मुख्यतया कुन कीरा प्रयोग गरिन्छ?",["भम्बल मौरी","पुतली","कमिला"],0],
+["हाँगा छाँटकाँटको उद्देश्य के हो?",["बाली सङ्कलन परिमाण वृद्धि र काम सजिलो बनाउनु","बिरुवा मार्नु","पानी कम गर्नु"],0],
+["थाँक्रो दिनुको मुख्य उद्देश्य के हो?",["बोट ढल्न र हाँगा झुल्नबाट रोक्नु","पानी दिन सजिलो बनाउनु","मल हाल्नु"],0],
+["बाली सङ्कलन पछि तुरुन्तै तरकारीलाई चिस्याउने प्रक्रियालाई के भनिन्छ?",["पास्चुराइजेसन","प्रि-कुलिङ","फ्रिजिङ"],1],
+["टनेल खेतीको मुख्य फाइदा के हो?",["पानी बढी चाहिन्छ","तापक्रम कायम राख्ने र हावा/वर्षा/कीराबाट बचाउनु","बिरुवा छिटो मर्छ"],1],
+["मल्चको प्रयोगले के फाइदा हुँदैन?",["माटोको तापक्रम समायोजन","पानी र मलको बहाव बढाउँछ","झार उम्रनबाट रोक्छ"],1],
+["झार उम्रनबाट रोक्नको लागि कुन रङको प्लास्टिक फिल्म प्रयोग गरिन्छ?",["पारदर्शी","कालो","सेतो"],1],
+["जैविक कीटनाशकको उदाहरण कुन हो?",["यूरिया","बेसिलस थुरिन्जिन्सिस","पोटास"],1],
+["फेरोमोन ट्रयापको उद्देश्य के हो?",["मल छर्नु","कीराको सहवासमा बाधा पुर्याई अर्को पुस्ता कम गर्नु","पानी सङ्कलन"],1],
+["स्प्रेयरमा कस्तो नोजल प्रयोग गरिन्छ?",["साधारण पानीको नोजल","विषादी छर्ने नोजल","धुलो छर्ने नोजल"],1],
+["मान्छे चढ्ने ट्रयाक्टरमा सुरक्षा फ्रेम किन आवश्यक छ?",["ट्रयाक्टर सुन्दर बनाउन","पल्टिँदा चालकको सुरक्षाको लागि","मल बोक्न"],1],
+["कीटनाशक छर्दा कस्तो पन्जा प्रयोग गर्नु हुँदैन?",["रबरको","सूतीको (भिजे हुनाले)","प्लास्टिकको"],1],
+["पेट्रोलियम पदार्थ भण्डारण गर्दा के गर्नु हुँदैन?",["आगो निषेध क्षेत्र बनाउनु","प्लास्टिकको कन्टेनरमा राख्नु","अग्नि नियन्त्रक राख्नु"],1],
+["स्टेपल्याडर प्रयोग गर्दा कहाँ उभिएर काम गर्नुपर्छ?",["दुईपट्टि खुट्टा राखेर","सिँढीमा (स्टेपमा) उभिएर","भुईमा उभिएर"],1],
+["धानको बोटको फलको बाहिरी खोस्टो निकालेपछि बाँकी रहने भागलाई के भनिन्छ?",["धान","चामल","पराल"],1],
+["जापानमा प्रायः कुन प्रकारको धान खेती गरिन्छ?",["इन्डिका","जापेनिका","अफ्रिकन धान"],1],
+["एउटै जातको तरकारी वर्षभरि उत्पादन गर्ने विधिलाई के भनिन्छ?",["मौसमी खेती","बाह्रमासे खेती","जैविक खेती"],1],
+["सदाबहार फलफूलको रूखको उदाहरण कुन हो?",["स्याउ","उन्सु सुन्तला","नासपाती"],1],
+["बिरुवाको श्वासप्रश्वास कहिले बढी हुन्छ?",["चिसोमा","उच्च तापक्रम र धेरै विकास भइरहेको बेला","राति मात्र"],1],
+["राति उच्च तापक्रम हुँदा बिरुवामा के हुन्छ?",["धेरै कार्बोहाइड्रेट बन्छ","दिउँसो बनाएको कार्बोहाइड्रेटको उपभोग बढी हुन्छ","बिरुवा चाँडो फल्छ"],1],
+["बिरुवाले माटोबाट पोषक तत्त्व र पानी कसरी सोस्छ?",["पातबाट","जराबाट","फूलबाट"],1],
+["निश्चित विकास भएपछि निश्चित क्रम अनुसार फूलको मुना छुट्टिने बिरुवाको उदाहरण कुन हो?",["मूला","गोलभाँडा","पालुङ्गो"],1],
+["कम तापक्रमले फूलको मुना छुट्टिने बिरुवा कुन हो?",["गहुँ","मूला","मकै"],1],
+["गोलभाँडाको बाली सङ्कलनको समय कहिले हो?",["बोटको उचाइ हेरेर","रङ्ग लाग्न थालेपछि","पात सुकेपछि"],1],
+["खेतबारीको माटोलाई गहिराइसम्म खनजोत गर्ने कार्यलाई के भनिन्छ?",["सतही जोत","गहिराएर खन्ने","माटो हिल्याउने"],1],
+["माटो सुधारको लागि कम्पोस्ट हाल्नु कुन गुणको सुधार हो?",["भौतिक","सूक्ष्म जीवाणु तह (जैविक)","सबै"],1],
+["एकै खेतमा लगातार एउटै बाली लगाउँदा माटोमा के हुन्छ?",["पोषक तत्त्व बढ्छ","रोगाणु र नेमाटोडको वृद्धि","उत्पादन बढ्छ"],1],
+["मलको प्याकेटमा N-P-K को अनुपात २०-१०-१० छ भने २० के जनाउँछ?",["पोटास","नाइट्रोजन","फस्फोरस"],1],
+["पानीको निकास र हावाको आवतजावतको लागि बनाइने अग्लो माटोको दिस्कोलाई के भनिन्छ?",["खाल्डो","झाड (बेड/रिज)","कुण्ड"],1],
+["बिरुवाको पात हटाउने (Defoliation) को उद्देश्य के हो?",["रोगी पात हटाई हावा र घाम पुर्याउनु","फल गुलियो बनाउनु","बीउ उमार्नु"],0],
+["खरबुजा र तरबुजामा निश्चित रूपमा फल फलाउन के गरिन्छ?",["धेरै पानी","कृत्रिम पराग सेचन","छायाँ बनाउने"],1],
+["गोलभाँडा, भन्टा र काँक्रोलाई थाँक्रो दिँदा के प्रयोग गरिन्छ?",["धागो","टेको वा टेप","प्लास्टिकको थैलो"],1],
+["भ्याकुम प्रि-कुलिङको विशेषता के हो?",["ढिलो चिस्याउँछ","तुरुन्तै चिस्याउँछ","पानी चाहिन्छ"],1],
+["टनेल बनाउन प्रयोग हुने सामग्रीमा के पर्दैन?",["पीभीसी","काँच","पोलिथिलिन फिल्म"],1],
+["सिधै छोपेर खेतीको फाइदा के हो?",["स्थिर अंकुरण र प्रारम्भिक विकास राम्रो","कीरा बढी लाग्छ","पानी धेरै लाग्छ"],0],
+["मल्चको रूपमा पराल प्रयोग गर्दा के हुन्छ?",["माटोको तापक्रम बढ्छ","झार उम्रन रोक्छ र पानीको बहाव रोक्छ","कीरा मर्छ"],1],
+["सेतो र कालो जोडेको दुई तहको फिल्मको उद्देश्य के हो?",["जमिनको तापक्रम वृद्धि नियन्त्रण","पानी जम्मा गर्नु","बीउ छर्नु"],0],
+["जैविक विघटन हुने फिल्मको फाइदा के हो?",["नष्ट प्रक्रिया गर्नु पर्दैन","धेरै टिकाउ हुन्छ","पारदर्शी हुन्छ"],0],
+["फिल्म नष्ट गर्दा के गर्नु हुँदैन?",["कम्पनीलाई दिने","खेतबारीमा जलाउने","पुनः प्रयोग गर्ने"],1],
+["रोग प्रतिरोधक जाति प्रयोग गर्नु कस्तो नियन्त्रण हो?",["रासायनिक","खेती विधि (सांस्कृतिक)","जैविक"],1],
+["पहेंलो बत्ती बालेर कीरा नियन्त्रण गर्नु कस्तो विधि हो?",["यौन फेरोमोन","भिजुअल नियन्त्रण","सांस्कृतिक"],1],
+["मान्छे चढ्ने ट्रयाक्टरको दायाँ–बायाँ ब्रेक प्याडल कहिले जोड्नुपर्छ?",["सधैं खुला राख्ने","ट्रयाक्टर गुडिरहेको बेला","कहिल्यै जोड्नु हुँदैन"],1],
+["कीटनाशक छर्दा प्रिभेन्टिभ पोसाकको बाहुला पन्जा माथि र पाइन्टले बुट छोप्नुपर्छ किन?",["फेसनको लागि","छालामा कीटनाशक नपरोस् भनेर","पानीबाट बच्न"],1],
+["मास्क र सुरक्षा चस्मा किन लगाउनुपर्छ?",["फोहोर देखिन नदिन","धुलो र कीटनाशकको धुवाँबाट आँखा र सास जोगाउन","सुन्दरताको लागि"],1],
+["पेट्रोल राख्ने कन्टेनर कस्तो हुनुपर्छ?",["प्लास्टिकको","धातुको","काठको"],1],
+["पेट्रोलियम पदार्थ हाल्दा पहिले के गर्नुपर्छ?",["इन्जिन चालू राख्ने","इन्जिन बन्द गर्ने","धूम्रपान गर्ने"],1],
+["२-साइकल इन्जिन भएको घाँस काट्ने मेसिनमा के मिसाएर प्रयोग गरिन्छ?",["पेट्रोल मात्र","पेट्रोल र तेलको मिश्रण","मट्टीतेल"],1],
+["कृषि मेसिनको दैनिक निरीक्षण गर्नुको मुख्य उद्देश्य के हो?",["मेसिनको क्षमता कायम राख्नु र दुर्घटना रोक्नु","समय बिताउनु","पानी बचाउनु"],0],
+["धानको बीउ भिजाउने कति दिनसम्म गरिन्छ?",["१ दिन","१० दिन","२० दिन"],1],
+["धानको बीउमा 'परेवाको छाती' भन्नाले के बुझिन्छ?",["बीउ सुकेको अवस्था","१ मिमि जति टुसा निस्केको अवस्था","पात आएको अवस्था"],1],
+["धानको बेना उमार्ने बक्सको साइज सामान्यतया कति हुन्छ?",["३०×६० से.मि.","६०×३०×३ से.मि.","१००×५० से.मि."],1],
+["धानको बाला निस्कनु १५-२५ दिन अगाडि हालिने मललाई के भनिन्छ?",["आधार मल","बाला मल","थप मल"],1],
+["धानको बाला निस्कने प्रक्रियालाई के भनिन्छ?",["बाला झार्नु","हेडिङ (बाला निस्कनु)","रोपाई"],1],
+["धान काट्ने र कुट्ने दुवै काम एकैसाथ गर्ने मेसिनलाई के भनिन्छ?",["ट्रयाक्टर","कम्बाइन","प्लाउ"],1],
+["भण्डारण गर्नु अगाडि धानको पानीको मात्रा कति प्रतिशतमा झार्नुपर्छ?",["३०-४०%","१४-१५%","५०-६०%"],1],
+["कम लागतको धान खेतीको लागि कुन विधि प्रयोग गरिन्छ?",["बेना उमार्ने","सिधै बीउ रोप्ने र पातलो खेती","धेरै मल हाल्ने"],1],
+["पशुको आहाराको लागि धानको बाला, डाँठ र पात प्रयोग गरी बनाइने दानालाई के भनिन्छ?",["पराल","धान WCS (होल क्रप साइलेज)","भुस"],1]
+];
+
+let qs=[], idx=0, score=0, wrong=0, timeouts=0, answered=false, tv=12, ti=null, dark=false;
+
+function sh(a){let b=[...a];for(let i=b.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+
+function init(){
+  qs=sh(ALL).map(q=>{
+    const cor=q[1][q[2]];
+    const so=sh([...q[1]]);
+    return{q:q[0],opts:so,cor:so.indexOf(cor)};
+  });
+  idx=0;score=0;wrong=0;timeouts=0;answered=false;
+  render();
+}
+
+function snd(t){
+  try{
+    const c=new(window.AudioContext||window.webkitAudioContext)();
+    const o=c.createOscillator(),g=c.createGain();
+    o.connect(g);g.connect(c.destination);
+    if(t==='ok'){
+      o.type='sine';
+      o.frequency.setValueAtTime(523,c.currentTime);
+      o.frequency.setValueAtTime(659,c.currentTime+0.1);
+      o.frequency.setValueAtTime(784,c.currentTime+0.2);
+      g.gain.setValueAtTime(0.25,c.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.5);
+      o.start();o.stop(c.currentTime+0.5);
+    }else{
+      o.type='sawtooth';
+      o.frequency.setValueAtTime(220,c.currentTime);
+      o.frequency.setValueAtTime(160,c.currentTime+0.15);
+      g.gain.setValueAtTime(0.2,c.currentTime);
+      g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+0.4);
+      o.start();o.stop(c.currentTime+0.4);
+    }
+  }catch(e){}
+}
+
+function startT(){
+  clearInterval(ti);tv=12;updT();
+  ti=setInterval(()=>{tv--;updT();if(tv<=0){clearInterval(ti);autoFail();}},1000);
+}
+
+function updT(){
+  const s=document.getElementById('tsvg');
+  const n=document.getElementById('tnum');
+  if(!s||!n)return;
+  const r=18,circ=2*Math.PI*r;
+  const col=tv>5?'#1D9E75':tv>2?'#EF9F27':'#D85A30';
+  s.style.strokeDasharray=`${circ*(tv/12)} ${circ}`;
+  s.style.stroke=col;
+  n.textContent=tv;n.style.fill=col;
+}
+
+function autoFail(){
+  if(answered)return;
+  answered=true;timeouts++;
+  snd('ng');
+  const q=qs[idx];
+  document.querySelectorAll('.obtn').forEach((b,i)=>{b.disabled=true;if(i===q.cor)b.classList.add('correct');});
+  const fb=document.getElementById('fb');
+  fb.className='fb to show';fb.textContent='समय सकियो! सही उत्तर माथि हेर्नुहोस्।';
+  document.getElementById('nb').style.display='inline-block';
+}
+
+function pick(i){
+  if(answered)return;
+  answered=true;clearInterval(ti);
+  const q=qs[idx];
+  document.querySelectorAll('.obtn').forEach(b=>b.disabled=true);
+  const fb=document.getElementById('fb');
+  if(i===q.cor){score++;snd('ok');document.querySelectorAll('.obtn')[i].classList.add('correct');fb.className='fb ok show';fb.textContent='सही छ!';}
+  else{wrong++;snd('ng');document.querySelectorAll('.obtn')[i].classList.add('wrong');document.querySelectorAll('.obtn')[q.cor].classList.add('correct');fb.className='fb ng show';fb.textContent='गलत! सही उत्तर माथि हेर्नुहोस्।';}
+  document.getElementById('nb').style.display='inline-block';
+}
+
+function next(){
+  idx++;answered=false;
+  if(idx>=100){showRes();return;}
+  render();
+}
+
+function showRes(){
+  clearInterval(ti);
+  const pct=Math.round(score/100*100);
+  const msg=pct>=80?'उत्कृष्ट परिणाम!':pct>=60?'राम्रो प्रयास!':'अझ अभ्यास गर्नुहोस्!';
+  document.getElementById('qapp').innerHTML=`<div class="res qanim">
+    <h2>${msg}</h2>
+    <div class="bigscore">${score}/100</div>
+    <p class="ressub">${pct}% सही</p>
+    <div class="statrow">
+      <div class="statcard"><div class="statval" style="color:#1D9E75">${score}</div><div class="statlbl">सही</div></div>
+      <div class="statcard"><div class="statval" style="color:#D85A30">${wrong}</div><div class="statlbl">गलत</div></div>
+      <div class="statcard"><div class="statval" style="color:#EF9F27">${timeouts}</div><div class="statlbl">समय सकियो</div></div>
+    </div>
+    <button class="rbtn" onclick="init()">फेरि सुरु गर्नुहोस्</button>
+  </div>`;
+}
+
+function toggleDark(){
+  dark=!dark;
+  const app=document.getElementById('qapp');
+  app.style.background=dark?'#181818':'';
+  app.style.borderRadius=dark?'12px':'';
+  app.style.padding=dark?'1rem':'1rem 0';
+  render();
+}
+
+function render(){
+  const q=qs[idx];
+  const ls=['A','B','C'];
+  const nb=idx+1<100?'अर्को प्रश्न →':'नतिजा हेर्नुहोस् →';
+  document.getElementById('qapp').innerHTML=`
+    <div class="hdr">
+      <div class="scorelbl">स्कोर: ${score}/${idx} &nbsp;|&nbsp; प्रश्न ${idx+1}/100</div>
+      <button class="dbtn" onclick="toggleDark()">${dark?'☀ Light':'◑ Dark'}</button>
+    </div>
+    <div class="pbar"><div class="pfill" style="width:${idx}%"></div></div>
+    <div class="trow">
+      <svg class="tsvg" viewBox="0 0 44 44">
+        <circle cx="22" cy="22" r="18" fill="none" stroke="var(--color-border-tertiary)" stroke-width="3"/>
+        <circle id="tsvg" cx="22" cy="22" r="18" fill="none" stroke="#1D9E75" stroke-width="3"
+          stroke-linecap="round" transform="rotate(-90 22 22)"
+          style="transition:stroke-dasharray 0.85s linear;stroke-dasharray:113 113"/>
+        <text id="tnum" x="22" y="27" text-anchor="middle" font-size="13" font-weight="500" fill="#1D9E75">${tv}</text>
+      </svg>
+      <div class="tmeta">
+        <div class="tnum-lbl">प्रश्न ${idx+1} / 100</div>
+        <div class="tsub">१२ सेकेन्ड छ</div>
+      </div>
+    </div>
+    <div class="qtxt qanim">${q.q}</div>
+    <div class="opts qanim">
+      ${q.opts.map((o,i)=>`<button class="obtn" onclick="pick(${i})"><span class="olbl">${ls[i]}</span>${o}</button>`).join('')}
+    </div>
+    <div class="fb" id="fb"></div>
+    <button class="nxtbtn" id="nb" onclick="next()">${nb}</button>
+  `;
+  if(dark){
+    document.getElementById('qapp').style.background='#181818';
+    document.getElementById('qapp').style.borderRadius='12px';
+    document.getElementById('qapp').style.padding='1rem';
+    document.querySelectorAll('.obtn').forEach(b=>{b.style.background='#242424';b.style.color='#ddd';b.style.borderColor='#3a3a3a';});
+  }
+  startT();
+}
+
+init();
+</script>

@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>कृषि MCQ क्विज - Agriculture Quiz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: #ecf0f1;
+        }
+
+        .quiz-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 100%;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .quiz-container {
+            background: #2c3e50;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            padding: 20px;
+            text-align: center;
+            color: white;
+        }
+
+        body.dark-mode .header {
+            background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .question-container {
+            padding: 40px 30px;
+        }
+
+        .question-number {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        body.dark-mode .question-number {
+            color: #bdc3c7;
+        }
+
+        .question {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            line-height: 1.4;
+            color: #2c3e50;
+        }
+
+        body.dark-mode .question {
+            color: #ecf0f1;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .option {
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 16px;
+            background: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        body.dark-mode .option {
+            border-color: #34495e;
+            background: #34495e;
+            color: #ecf0f1;
+        }
+
+        .option:hover {
+            border-color: #4facfe;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(79, 172, 254, 0.2);
+        }
+
+        .option.selected {
+            border-color: #4facfe;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: white;
+        }
+
+        .option.correct {
+            border-color: #51cf66;
+            background: linear-gradient(135deg, #51cf66, #40c057);
+            color: white;
+        }
+
+        .option.wrong {
+            border-color: #ff6b6b;
+            background: linear-gradient(135deg, #ff6b6b, #ff5252);
+            color: white;
+        }
+
+        .timer {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #ff6b6b;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(79, 172, 254, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .result-container {
+            padding: 60px 40px;
+            text-align: center;
+        }
+
+        .score {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .score.perfect {
+            background: linear-gradient(135deg, #51cf66, #40c057);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .restart-btn {
+            padding: 18px 50px;
+            font-size: 18px;
+            margin-top: 30px;
+        }
+
+        .dark-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.9);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .dark-toggle {
+            background: rgba(0,0,0,0.8);
+            color: white;
+        }
+
+        .dark-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        @media (max-width: 480px) {
+            .question {
+                font-size: 20px;
+            }
+            
+            .question-container {
+                padding: 30px 20px;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+        }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: 600;
+            display: none;
+        }
+
+        .feedback.correct {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .feedback.wrong {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        body.dark-mode .feedback.correct {
+            background: #2d5a3a;
+            color: #c3e6cb;
+        }
+
+        body.dark-mode .feedback.wrong {
+            background: #5a2d3a;
+            color: #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <button class="dark-toggle" onclick="toggleDarkMode()">🌙</button>
+    
+    <div class="quiz-container" id="quizContainer">
+        <div class="header">
+            <h1>🌾 कृषि MCQ क्विज</h1>
+            <div class="progress-bar">
+                <div class="progress" id="progress"></div>
+            </div>
+            <div>प्रश्न <span id="currentQuestion">1</span> / <span id="totalQuestions">100</span></div>
+            <div id="scoreDisplay" style="display: none;">स्कोर: <span id="currentScore">0</span></div>
+        </div>
+
+        <div id="questionScreen">
+            <div class="question-container">
+                <div class="question-number" id="questionNumber"></div>
+                <div class="question" id="question"></div>
+                
+                <div class="options" id="options"></div>
+                
+                <div class="feedback" id="feedback"></div>
+                
+                <div class="controls">
+                    <button class="btn btn-secondary" id="prevBtn" onclick="previousQuestion()" disabled>अघिल्लो</button>
+                    <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">अर्को</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="resultScreen" style="display: none;">
+            <div class="result-container">
+                <div class="score" id="finalScore">0</div>
+                <div style="font-size: 24px; margin-bottom: 20px; color: #666;">
+                    कुल <span id="totalScore">100</span> मा
+                </div>
+                <div style="font-size: 18px; margin-bottom: 30px; color: #888;">
+                    बधाई हो! तपाईंको प्रदर्शन राम्रो छ।
+                </div>
+                <button class="btn btn-primary restart-btn" onclick="restartQuiz()">फेरि सुरु गर्नुहोस्</button>
+            </div>
+        </div>
+    </div>
+
+    <audio id="correctSound" preload="auto">
+        <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSxHzPCImUQAl5v+f2vYxQDUm9J9f6hVA" type="audio/wav">
+    </audio>
+    <audio id="wrongSound" preload="auto">
+        <source src="data:audio/wav;base64,UklGRp4GAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSxHzPCImUQAl5v+f2vYxQDUm9J9f6hVA" type="audio/wav">
+    </audio>
+
+    <script>
+        const questions = [
+            {
+                id: 301,
+                question: "फलफूलको रूखको “पुनः रोपण” (Replanting) किन गरिन्छ?",
+                options: ["नयाँ प्रजाति लगाउन र जोस कम भएको रूख हटाउन", "पानी बचाउन", "मल हाल्न"],
+                answer: 0
+            },
+            {
+                id: 302,
+                question: "फलफूलको रूखमा “माथिको कलमी” (Top grafting) गर्नुको उद्देश्य के हो?",
+                options: ["जरा बलियो बनाउन", "छोटो अवधिमा प्रजाति नवीकरण", "पात हरियो बनाउन"],
+                answer: 1
+            },
+            {
+                id: 303,
+                question: "फलफूल बगैँचामा माटोको सतह व्यवस्थापनको एउटा विधि के हो?",
+                options: ["सबै झारपात हटाउने", "झारपात जिउँदै राख्ने (Cover crop)", "पानी जम्मा गर्ने"],
+                answer: 1
+            },
+            {
+                id: 304,
+                question: "हुलो वर्षाले माटो नबग्नको लागि के गरिन्छ?",
+                options: ["पानीको निकासको व्यवस्था", "धेरै मल हाल्ने", "बिरुवा नरोप्ने"],
+                answer: 0
+            },
+            {
+                id: 305,
+                question: "फलफूलको रूखको लागि “आधार मल” (Base fertilizer) कहिले हालिन्छ?",
+                options: ["बढ्न सुरु हुनु अगाडि", "फल सङ्कलन पछि मात्र", "हिउँदको बीचमा"],
+                answer: 0
+            },
+            {
+                id: 306,
+                question: "फलफूलको रूखमा ‘वसन्त मल” (Spring fertilizer) लाई अर्को के भनिन्छ?",
+                options: ["फल मल", "मुना उमार्ने मल", "धन्यवाद मल"],
+                answer: 1
+            },
+            {
+                id: 307,
+                question: "फलफूलको रूखमा “शरद मल” (Autumn fertilizer) लाई के भनिन्छ?",
+                options: ["फल मल", "धन्यवाद मल", "आधार मल"],
+                answer: 1
+            },
+            {
+                id: 308,
+                question: "सिट्रस फलफूल (Citrus) को 70% भाग जापानमा के हो?",
+                options: ["अङ्गूर", "उन्सु सुन्तला (Unshu mikan)", "लौकाठ"],
+                answer: 1
+            },
+            {
+                id: 309,
+                question: "सिट्रस फलफूलमा हरेक वर्ष फलको मात्रा बढी र कम हुने प्रवृत्तिलाई के भनिन्छ?",
+                options: ["पालेसँग फल्ने (Alternate bearing)", "नियमित फल्ने", "एकपटक फल्ने"],
+                answer: 0
+            },
+            {
+                id: 310,
+                question: "स्याउ (Apple) को मुख्य प्रजाति जापानमा कुन हो?",
+                options: ["फुजी (Fuji)", "गाला", "ग्रेनी स्मिथ"],
+                answer: 0
+            },
+            {
+                id: 311,
+                question: "स्याउमा “ड्वार्फ रुटस्टक” (Dwarf rootstock) प्रयोग गर्नुको मुख्य उद्देश्य के हो?",
+                options: ["रूखको उचाइ घटाई श्रम कम गर्ने र छिटो उपज", "फल हल्का बनाउने", "पानी कम चाहिने"],
+                answer: 0
+            },
+            {
+                id: 312,
+                question: "अङ्गूर (Grape) को मुख्य प्रजाति के हो?",
+                options: ["डेलावेर (Delaware)", "क्योहो (Kyoho)", "पिओने (Pione)"],
+                answer: 1
+            },
+            {
+                id: 313,
+                question: "अङ्गूरको सेल्फ कटाइ (Self training) को उद्देश्य के हो?",
+                options: ["हाँगा समान रूपमा फैलाउने", "जरा जमिनमुनि पुर्याउने", "फल जमिनमा फैलाउने"],
+                answer: 0
+            },
+            {
+                id: 314,
+                question: "हलुवाबेत (Persimmon) को गुलियो प्रजातिको उदाहरण कुन हो?",
+                options: ["हिरातानेनासी", "फ्रुयु (Fuyu)", "टोने वासे"],
+                answer: 1
+            },
+            {
+                id: 315,
+                question: "नासपाती (Pear) को जापानी प्रजातिमा कुन प्रमुख छ?",
+                options: ["कोउसुई (Kousui)", "बार्दलेट", "कन्फरेस्"],
+                answer: 0
+            },
+            {
+                id: 316,
+                question: "आरु (Peach) मा फललाई झोलाले छोप्नुको एउटा कारण के हो?",
+                options: ["बाहिरी रूप राम्रो बनाउन र रोग/कीराबाट बचाउन", "फल चाँडो पाकोस्", "फल सानो रहोस्"],
+                answer: 0
+            },
+            {
+                id: 317,
+                question: "फलफूलको रूखमा तुसारो (Frost) बाट बच्न के प्रयोग गरिन्छ?",
+                options: ["हीटर", "तुसारोबाट जोगाउने पङ्खा", "पानी हाल्ने"],
+                answer: 1
+            },
+            {
+                id: 318,
+                question: "फलफूलको रूखको “प्रतिबिम्ब सिट” (Reflective sheet) कहिले ओछ्याइन्छ?",
+                options: ["हिउँदमा", "फल सङ्कलनको समयमा", "वसन्तमा"],
+                answer: 1
+            },
+            {
+                id: 319,
+                question: "फलफूल बगैँचामा ढुवानीको लागि प्रयोग हुने साधन कुन हो?",
+                options: ["स्प्रेयर", "मोनोरेल", "रोटरी टिलर"],
+                answer: 1
+            },
+            {
+                id: 320,
+                question: "फलफूलको रूख छाँट्ने प्रमुख औजार के हो?",
+                options: ["हाँसिया", "छाँटकाँट कैंची", "कोदालो"],
+                answer: 1
+            },
+            {
+                id: 321,
+                question: "माटोको उत्पादन शक्ति बढाउन कुन कुरा आवश्यक छैन?",
+                options: ["बाक्लो नरम माटोको तह", "उचित पोषक तत्त्व र pH", "धेरै नुनिलो माटो"],
+                answer: 2
+            },
+            {
+                id: 322,
+                question: "माटोको भौतिक सुधारको लागि कुन कार्य गरिन्छ?",
+                options: ["खनजोत", "चुन हाल्ने", "कम्पोस्ट हाल्ने"],
+                answer: 0
+            },
+            {
+                id: 323,
+                question: "माटोको रासायनिक गुण सुधार गर्न के हालिन्छ?",
+                options: ["कम्पोस्ट", "चुन वा म्याग्नेसियम चुन", "बालुवा"],
+                answer: 1
+            },
+            {
+                id: 324,
+                question: "माटोको जैविक (सूक्ष्म जीवाणु) सुधारको लागि के हालिन्छ?",
+                options: ["रासायनिक मल", "कम्पोस्ट र प्राङ्गारिक पदार्थ", "कीटनाशक"],
+                answer: 1
+            },
+            {
+                id: 325,
+                question: "pH मान ७ भन्दा कम भएको माटोलाई के भनिन्छ?",
+                options: ["क्षारीय", "अम्लीय", "तटस्थ"],
+                answer: 1
+            },
+            {
+                id: 326,
+                question: "चिया (Tea) को लागि उपयुक्त pH कति हो?",
+                options: ["६.०–७.०", "४.५–५.५", "७.०–८.०"],
+                answer: 1
+            },
+            {
+                id: 327,
+                question: "“सोइल एसिडिमिटर” ले के मापन गर्छ?",
+                options: ["पानीको मात्रा", "माटोको अम्लीयपना (pH)", "मलको मात्रा"],
+                answer: 1
+            },
+            {
+                id: 328,
+                question: "ट्रयाक्टरमा रोटरी जडान गरी के गरिन्छ?",
+                options: ["पानी हाल्ने", "खनजोत", "बीउ छर्ने"],
+                answer: 1
+            },
+            {
+                id: 329,
+                question: "ठेल्ने ट्रयाक्टर (Walking tractor) लाई के भनिन्छ?",
+                options: ["व्यवस्थापन मेसिन", "कम्बाइन", "हार्भेस्टर"],
+                answer: 0
+            },
+            {
+                id: 330,
+                question: "लगातार खेतीको क्षति नियन्त्रणको लागि बाली चक्र बाहेक अर्को विधि के हो?",
+                options: ["धेरै मल हाल्ने", "माटोको सोलराइजेसन", "पानी नहाल्ने"],
+                answer: 1
+            },
+            {
+                id: 331,
+                question: "बिरुवाको अनिवार्य तत्त्व (Essential elements) कति वटा छन्?",
+                options: ["१०", "१६", "२०"],
+                answer: 1
+            },
+            {
+                id: 332,
+                question: "पोटासियम (K) को मुख्य काम के हो?",
+                options: ["पात हरियो बनाउने", "फूल, फल र जराको विकास", "डाँठ लामो बनाउने"],
+                answer: 1
+            },
+            {
+                id: 333,
+                question: "यूरिया (Urea) कस्तो मल हो?",
+                options: ["प्राङ्गारिक मल", "एकतत्त्वयुक्त रासायनिक मल (नाइट्रोजन)", "संयुक्त मल"],
+                answer: 1
+            },
+            {
+                id: 334,
+                question: "बीउ रोप्दा “माटोले छोप्ने” किन आवश्यक छ?",
+                options: ["प्रकाश रोक्न", "अंकुरणको तीन सर्त (पानी, ताप, अक्सिजन) कायम राख्नु", "कीरा लाग्न नदिन"],
+                answer: 1
+            },
+            {
+                id: 335,
+                question: "पातल्याउने (Thinning) कार्य गर्दा के हटाइन्छ?",
+                options: ["रोगी, असामान्य र अनावश्यक बिरुवा", "सबै बिरुवा", "मात्र ठूला बिरुवा"],
+                answer: 0
+            },
+            {
+                id: 336,
+                question: "बेना उमार्ने (Nursery raising) को एउटा फाइदा के हो?",
+                options: ["खेतबारीमा समय कम लाग्छ", "मल धेरै चाहिन्छ", "बिरुवा कमजोर हुन्छ"],
+                answer: 0
+            },
+            {
+                id: 337,
+                question: "हातले बेना सार्नुको के फाइदा छ?",
+                options: ["धेरै समय लाग्छ तर खर्च लाग्दैन र निश्चित हुन्छ", "मेसिन चाहिन्छ", "धेरै बिरुवा मर्छन्"],
+                answer: 0
+            },
+            {
+                id: 338,
+                question: "सिँचाइको थोपा विधि (Drip irrigation) को उपकरण के हो?",
+                options: ["स्प्रिंकलर", "थोपा सिँचाइ ट्यूब", "चाल्नीदार टुटी"],
+                answer: 1
+            },
+            {
+                id: 339,
+                question: "माटोको एकलित दाना (Aggregate) बढाउन के हालिन्छ?",
+                options: ["बालुवा", "कम्पोस्ट र प्राङ्गारिक पदार्थ", "सिमेन्ट"],
+                answer: 1
+            },
+            {
+                id: 340,
+                question: "ग्ले माटो (Gley soil) सामान्यतया कहाँ पाइन्छ?",
+                options: ["पहाडमा", "धानको खेतको पानी जम्ने तल्लो भागमा", "पठारमा"],
+                answer: 1
+            },
+            {
+                id: 341,
+                question: "होचो भू-भागको खरानी रङ्गको माटो कहाँ पाइन्छ?",
+                options: ["अलुभियल फ्यान र समथर भागमा", "ज्वालामुखी क्षेत्र", "खोला किनार"],
+                answer: 0
+            },
+            {
+                id: 342,
+                question: "माटोको तीन तह (ठोस, तरल, ग्यास) को राम्रो सन्तुलन कस्तो हुन्छ?",
+                options: ["प्रत्येक ३०-४०%", "ठोस ७०% तरल २०% ग्यास १०%", "तरल ५०% ठोस ४०% ग्यास १०%"],
+                answer: 0
+            },
+            {
+                id: 343,
+                question: "कम्पोस्ट (Compost) मा माटो सुधारको अलावा के फाइदा हुन्छ?",
+                options: ["छिटो लाग्ने मलको रूप", "मलको फाइदा पनि (पोषक तत्व)", "पानी रोक्ने"],
+                answer: 1
+            },
+            {
+                id: 344,
+                question: "“ब्रोडकास्टर” (Broadcaster) कुन काममा प्रयोग गरिन्छ?",
+                options: ["बीउ छर्ने", "मल छर्ने", "पानी हाल्ने"],
+                answer: 1
+            },
+            {
+                id: 345,
+                question: "२० किलोको प्याकेटमा “१०-८-८” भएमा पोटासियम (K) को मात्रा कति हुन्छ?",
+                options: ["२ किलो", "१.६ किलो", "८ किलो"],
+                answer: 1
+            },
+            {
+                id: 346,
+                question: "मल हाल्दा EC (इलेक्ट्रिकल कन्डक्टिभिटी) ले के जनाउँछ?",
+                options: ["माटोको pH", "माटोमा बाँकी नुनिलो तत्त्व (मलको मात्रा)", "पानीको तापक्रम"],
+                answer: 1
+            },
+            {
+                id: 347,
+                question: "झाड बनाउने (Bed making) मेसिनको प्रकार के हो?",
+                options: ["रोटरी टिलर", "बेड फर्मर", "स्प्रेयर"],
+                answer: 1
+            },
+            {
+                id: 348,
+                question: "टुप्पो चुँड्ने (Pinching) गर्दा के हुन्छ?",
+                options: ["पोषक तत्त्व सबै पात र फलमा पुग्छ", "बिरुवा मर्छ", "जरा कमजोर हुन्छ"],
+                answer: 0
+            },
+            {
+                id: 349,
+                question: "पात हटाउने (Leaf removal) ले के फाइदा गर्छ?",
+                options: ["राम्रो हावा आवतजावत र घाम पर्ने", "मल बच्छ", "पानी कम चाहिन्छ"],
+                answer: 0
+            },
+            {
+                id: 350,
+                question: "कृत्रिम पराग सेचनमा मौरीको अलावा के प्रयोग हुन्छ?",
+                options: ["भम्बल मौरी", "पुतली", "कमिला"],
+                answer: 0
+            },
+            {
+                id: 351,
+                question: "स्ट्रबेरीको पराग सेचनको लागि मुख्य कीरा कुन हो?",
+                options: ["मौरी", "भम्बल मौरी", "हिँगा"],
+                answer: 1
+            },
+            {
+                id: 352,
+                question: "खरबुजा (Melon) मा निश्चित फल फलाउन के गरिन्छ?",
+                options: ["धेरै पानी", "कृत्रिम पराग सेचन", "कम प्रकाश"],
+                answer: 1
+            },
+            {
+                id: 353,
+                question: "हाँगा छाँटकाँट (Pruning) को एउटा विधि के हो?",
+                options: ["हाँगोको बीचमा काट्ने (Heading back)", "पानी हाल्ने", "मल छर्ने"],
+                answer: 0
+            },
+            {
+                id: 354,
+                question: "“थाँक्रो” (Staking) दिंदा के प्रयोग गरिन्छ?",
+                options: ["धागो", "क्लिप वा टेको", "प्लास्टिकको थैलो"],
+                answer: 1
+            },
+            {
+                id: 355,
+                question: "बाली सङ्कलन पछि प्रि-कुलिङ (Pre-cooling) किन आवश्यक छ?",
+                options: ["ताजापन कायम राख्नु", "मल बचाउन", "पानी सुकाउन"],
+                answer: 0
+            },
+            {
+                id: 356,
+                question: "प्रि-कुलिङको भ्याकुम विधि (Vacuum method) कस्तो छ?",
+                options: ["ढिलो चिस्याउँछ", "तुरुन्तै चिस्याउँछ", "पानी चाहिन्छ"],
+                answer: 1
+            },
+            {
+                id: 357,
+                question: "टनेल खेती (Tunnel cultivation) मा प्रयोग हुने सामग्री के हो?",
+                options: ["काँच", "PVC वा पोलिथिलिन", "ढुङ्गा"],
+                answer: 1
+            },
+            {
+                id: 358,
+                question: "प्लास्टिक फिल्मको कालो रङले के गर्छ?",
+                options: ["जमिनको तापक्रम बढाउँछ", "झार उम्रनबाट रोक्छ", "प्रकाश बढाउँछ"],
+                answer: 1
+            },
+            {
+                id: 359,
+                question: "सेतो प्लास्टिक फिल्मको मुख्य काम के हो?",
+                options: ["जमिनको तापक्रम बढ्नबाट रोक्नु", "झार उमार्नु", "पानी बढाउने"],
+                answer: 0
+            },
+            {
+                id: 360,
+                question: "हरियो प्लास्टिक फिल्मको विशेषता के हो?",
+                options: ["तापक्रम बढाउने र झार रोक्ने दुवै", "केवल तापक्रम घटाउने", "केवल पानी रोक्ने"],
+                answer: 0
+            },
+            {
+                id: 361,
+                question: "मल्चिङ गर्दा प्लास्टिक फिल्मको “दुई तह” (सेतो+कालो) को उद्देश्य के हो?",
+                options: ["जमिनको तापक्रम वृद्धि नियन्त्रण", "धेरै प्रकाश दिने", "पानी बढाउने"],
+                answer: 0
+            },
+            {
+                id: 362,
+                question: "सूर्यको प्रकाश प्रतिबिम्बित गर्ने सिल्भर फिल्मको उद्देश्य के हो?",
+                options: ["प्रकाश प्रयोग र कीरा रोकथाम", "पानी सोस्न", "मल बचाउन"],
+                answer: 0
+            },
+            {
+                id: 363,
+                question: "जैविक विघटन हुने फिल्मको फाइदा के हो?",
+                options: ["नष्ट प्रक्रिया गर्नु पर्दैन", "धेरै टिकाउ", "सस्तो"],
+                answer: 0
+            },
+            {
+                id: 364,
+                question: "फिल्म नष्ट गर्दा कहिल्यै के गर्नु हुँदैन?",
+                options: ["कम्पनीलाई दिने", "खेतबारीमा जलाउने", "पुनः प्रयोग गर्ने"],
+                answer: 1
+            },
+            {
+                id: 365,
+                question: "रोग तथा कीरा नियन्त्रणको लागि पहेंलो बत्तीको प्रयोग कस्तो विधि हो?",
+                options: ["रासायनिक", "भिजुअल", "जैविक"],
+                answer: 1
+            },
+            {
+                id: 366,
+                question: "फेरोमोन ट्रयापले कसरी काम गर्छ?",
+                options: ["कीरालाई आकर्षित गरी मार्ने/सहवास रोक्ने", "मल छर्ने", "पानी दिने"],
+                answer: 0
+            },
+            {
+                id: 367,
+                question: "कीराबाट बचाउने जाली प्रयोग गर्नु कस्तो नियन्त्रण हो?",
+                options: ["रासायनिक", "भौतिक", "जैविक"],
+                answer: 1
+            },
+            {
+                id: 368,
+                question: "झारपात नियन्त्रणको लागि “मल्चिङ” कस्तो विधि हो?",
+                options: ["रासायनिक", "भौतिक", "जैविक"],
+                answer: 1
+            },
+            {
+                id: 369,
+                question: "कीटनाशक छर्दा सूतीको पन्जा किन प्रयोग गर्नु हुँदैन?",
+                options: ["महँगो हुन्छ", "भिजेर रसायन छालामा पुग्छ", "चिसो हुन्छ"],
+                answer: 1
+            },
+            {
+                id: 370,
+                question: "पेट्रोलियम पदार्थको कन्टेनर कहाँ राख्नुपर्छ?",
+                options: ["घरभित्र", "आगो निषेध गरिएको ठाउँमा अग्नि नियन्त्रकसहित", "खुला मैदानमा"],
+                answer: 1
+            },
+            {
+                id: 371,
+                question: "लामो समय भण्डारण गरिएको इन्धन प्रयोग गर्नु किन हुँदैन?",
+                options: ["इन्धन बिग्रिएर मेसिनमा क्षति पुग्छ", "महँगो हुन्छ", "पानी मिसिन्छ"],
+                answer: 0
+            },
+            {
+                id: 372,
+                question: "स्टेपल्याडर प्रयोग गर्दा पहिले के निरीक्षण गर्नुपर्छ?",
+                options: ["रङ", "चक्र, भाँचिएको वा बाङ्गिएको ठाउँ", "पानी"],
+                answer: 1
+            },
+            {
+                id: 373,
+                question: "व्यवस्थापन मेसिन स्टार्ट गर्दा मुख्य क्लच लीभर कस्तो हुनुपर्छ?",
+                options: ["\"अन\"", "\"अफ\"", "बीचमा"],
+                answer: 1
+            },
+            {
+                id: 374,
+                question: "रिकोइल स्टार्टर तान्दा के गर्नुपर्छ?",
+                options: ["बिस्तारै तान्ने", "बल लगाएर तान्ने", "पानी हाल्ने"],
+                answer: 1
+            },
+            {
+                id: 375,
+                question: "घाँस काट्ने मेसिनमा चोक लीभर कहिले “बन्द” गरिन्छ?",
+                options: ["इन्जिन तातो हुँदा", "इन्जिन चिसो हुँदा स्टार्ट गर्न", "इन्जिन बन्द गर्दा"],
+                answer: 1
+            },
+            {
+                id: 376,
+                question: "घाँस काट्ने मेसिनको प्राइमर पम्पले के गर्छ?",
+                options: ["इन्जिन बन्द गर्छ", "मिश्रित पेट्रोल कार्बोरेटरमा पठाउँछ", "चोक खोल्छ"],
+                answer: 1
+            },
+            {
+                id: 377,
+                question: "धानको बीउको कीटाणुशोधन कुन रोगको लागि गरिन्छ?",
+                options: ["धान मरुवा", "सबै बीउबाट सर्ने रोग", "पातको दाग"],
+                answer: 1
+            },
+            {
+                id: 378,
+                question: "धानको बेना उमार्ने बक्समा के हालिन्छ?",
+                options: ["प्लास्टिक", "मल मिसाइएको माटो", "बालुवा"],
+                answer: 1
+            },
+            {
+                id: 379,
+                question: "धानको “किल्लो बाला छुट्टिने अवधि” देखि बाला निस्कन कति दिन लाग्छ?",
+                options: ["१० दिन", "३० दिन", "५० दिन"],
+                answer: 1
+            },
+            {
+                id: 380,
+                question: "बाला निस्केको कति दिनमा धानको बाली सङ्कलन गरिन्छ?",
+                options: ["१०-२० दिन", "३०-६० दिन", "७०-९० दिन"],
+                answer: 1
+            },
+            {
+                id: 381,
+                question: "जापानमा धानको बाली सङ्कलनमा प्रयोग हुने कम्बाइनको प्रकार के हो?",
+                options: ["सेल्फ प्रोपेल्ड", "हेड फिडिङ कम्बाइन", "रोटरी"],
+                answer: 1
+            },
+            {
+                id: 382,
+                question: "धान कुट्ने (Milling) कार्यले के हुन्छ?",
+                options: ["धानको भुस हटेर खैरो चामल बन्छ", "चामल पिठो हुन्छ", "पराल बन्छ"],
+                answer: 0
+            },
+            {
+                id: 383,
+                question: "“कम लागतको धान खेती” को लागि कुन विधि उपयुक्त छैन?",
+                options: ["सिधै बीउ रोप्ने", "पातलो खेती", "धेरै बेना रोप्ने"],
+                answer: 2
+            },
+            {
+                id: 384,
+                question: "पशुको आहाराको चामलको बिक्री मूल्य सामान्य चामलको तुलनामा कस्तो हुन्छ?",
+                options: ["बढी", "कम", "बराबर"],
+                answer: 1
+            },
+            {
+                id: 385,
+                question: "धान WCS (Whole Crop Silage) को लागि कुन प्रजाति रोजिन्छ?",
+                options: ["उच्च उत्पादन, रोग प्रतिरोधी, ढल्न नसक्ने", "राम्रो स्वाद", "सानो दाना"],
+                answer: 0
+            },
+            {
+                id: 386,
+                question: "तरकारीको प्राकृतिक वर्गीकरणमा कुकुरबिटासी समूहमा कुन पर्छ?",
+                options: ["गोलभाँडा", "फर्सी (Pumpkin)", "प्याज"],
+                answer: 1
+            },
+            {
+                id: 387,
+                question: "कृत्रिम वर्गीकरणमा “हरियो सागपात” को उदाहरण कुन हो?",
+                options: ["गाजर", "बन्दाकोबी", "गोलभाँडा"],
+                answer: 1
+            },
+            {
+                id: 388,
+                question: "कृत्रिम वर्गीकरणमा “कन्दमूल तरकारी” को उदाहरण कुन हो?",
+                options: ["काँक्रो", "मूला", "भन्टा"],
+                answer: 1
+            },
+            {
+                id: 389,
+                question: "कृत्रिम वर्गीकरणमा “फल तरकारी” को उदाहरण कुन हो?",
+                options: ["पालुङ्गो", "गोलभाँडा", "बन्दाकोबी"],
+                answer: 1
+            },
+            {
+                id: 390,
+                question: "चाइनिज बन्दाकोबी (हाकुसाइ) कस्तो तरकारी हो?",
+                options: ["शरदको तरकारी, अचार र हट-पटमा प्रयोग", "ग्रीष्मकालीन तरकारी", "केवल सलाद"],
+                answer: 0
+            },
+            {
+                id: 391,
+                question: "लेटस (सलाद साग) लाई उच्च तापक्रममा के हुन्छ?",
+                options: ["राम्रो हुर्किन्छ", "फूलको मुना छुटिन्छ (Bolting)", "पात ठूलो हुन्छ"],
+                answer: 1
+            },
+            {
+                id: 392,
+                question: "पालुङ्गोको बाली सङ्कलनको सन्दर्भमा सही कथन कुन हो?",
+                options: ["बीउ छरेको १-२ महिनामा सङ्कलन", "६ महिना लाग्छ", "एक वर्ष लाग्छ"],
+                answer: 0
+            },
+            {
+                id: 393,
+                question: "मूला (Radish) मा कम तापक्रमले के हुन्छ?",
+                options: ["फूलको मुना छुटिन्छ (Bolting)", "जरा ठूलो हुन्छ", "पात सुक्छ"],
+                answer: 0
+            },
+            {
+                id: 394,
+                question: "सखरखण्ड (Sweet potato) मा मल कम हुँदा के हुन्छ?",
+                options: ["पात र डाँठ ठूलो", "जरा ठूलो हुन्छ राम्रोसँग", "बोट मर्छ"],
+                answer: 1
+            },
+            {
+                id: 395,
+                question: "गाजर (Carrot) को बीउ अंकुरणको लागि के चाहिन्छ?",
+                options: ["धेरै पानी", "सुक्खा अवस्था", "उचित आर्द्रता"],
+                answer: 2
+            },
+            {
+                id: 396,
+                question: "आलु (Potato) को भण्डारणको लागि उपयुक्त तापक्रम कति हो?",
+                options: ["०-२°C", "४-८°C", "१०-१५°C"],
+                answer: 1
+            },
+            {
+                id: 397,
+                question: "प्याज (Onion) को भण्डारणको लागि उपयुक्त तापक्रम कति हो?",
+                options: ["०-२°C", "४-८°C", "१०-१५°C"],
+                answer: 0
+            },
+            {
+                id: 398,
+                question: "बन्दाकोबी (Cabbage) को भण्डारणको लागि उपयुक्त तापक्रम कति हो?",
+                options: ["०-२°C", "४-८°C", "१०-१५°C"],
+                answer: 0
+            },
+            {
+                id: 399,
+                question: "गोलभाँडा (Tomato) को पाक्ने क्रममा कुन हर्मोनको मात्रा बढ्छ?",
+                options: ["अक्सिन", "एथिलिन", "जिबेरिलिन"],
+                answer: 1
+            },
+            {
+                id: 400,
+                question: "फलफूलको रूखको 'डोरमेन्सी' (Dormancy) तोड्न के आवश्यक हुन्छ?",
+                options: ["उच्च तापक्रम", "कम तापक्रम (चिसो)", "धेरै पानी"],
+                answer: 1
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let answers = {};
+        let timer;
+        let timeLeft = 10;
+        let shuffledQuestions = [];
+
+        const correctSound = document.getElementById('correctSound');
+        const wrongSound = document.getElementById('wrongSound');
+
+        function init() {
+            shuffledQuestions = [...questions].sort(() => Math.random() - 0.5);
+            currentQuestionIndex = 0;
+            score = 0;
+            answers = {};
+            timeLeft = 10;
+            showQuestion();
+        }
+
+        function showQuestion() {
+            if (currentQuestionIndex >= shuffledQuestions.length) {
+                showResult();
+                return;
+            }
+
+            const q = shuffledQuestions[currentQuestionIndex];
+            document.getElementById('questionNumber').textContent = `प्रश्न ${currentQuestionIndex + 1}: (${q.id})`;
+            document.getElementById('question').textContent = q.question;
+            document.getElementById('currentQuestion').textContent = currentQuestionIndex + 1;
+            document.getElementById('totalQuestions').textContent = shuffledQuestions.length;
+            document.getElementById('scoreDisplay').style.display = 'none';
+
+            const optionsContainer = document.getElementById('options');
+            optionsContainer.innerHTML = '';
+
+            q.options.forEach((option, index) => {
+                const optionEl = document.createElement('div');
+                optionEl.className = 'option';
+                optionEl.innerHTML = `<span class="timer" id="timer${currentQuestionIndex}">${timeLeft}s</span>${option}`;
+                optionEl.onclick = () => selectOption(index);
+                optionsContainer.appendChild(optionEl);
+            });
+
+            document.getElementById('prevBtn').disabled = currentQuestionIndex === 0;
+            document.getElementById('nextBtn').textContent = currentQuestionIndex === shuffledQuestions.length - 1 ? 'समाप्त' : 'अर्को';
+            document.getElementById('feedback').style.display = 'none';
+
+            updateProgress();
+            startTimer();
+        }
+
+        function selectOption(selectedIndex) {
+            clearInterval(timer);
+            const q = shuffledQuestions[currentQuestionIndex];
+            const options = document.querySelectorAll('.option');
+            
+            options.forEach((opt, index) => {
+                opt.classList.remove('selected', 'correct', 'wrong');
+                if (index === q.answer) {
+                    opt.classList.add('correct');
+                } else if (index === selectedIndex && index !== q.answer) {
+                    opt.classList.add('wrong');
+                }
+                opt.style.pointerEvents = 'none';
+            });
+
+            if (selectedIndex === q.answer) {
+                if (!answers[q.id]) {
+                    score++;
+                    answers[q.id] = true;
+                    playSound(correctSound);
+                }
+            } else {
+                answers[q.id] = false;
+                playSound(wrongSound);
+            }
+
+            document.getElementById('currentScore').textContent = score;
+            showFeedback(selectedIndex === q.answer);
+        }
+
+        function showFeedback(isCorrect) {
+            const feedback = document.getElementById('feedback');
+            feedback.textContent = isCorrect ? '✅ सही उत्तर!' : '❌ गलत उत्तर!';
+            feedback.className = `feedback ${isCorrect ? 'correct' : 'wrong'}`;
+            feedback.style.display = 'block';
+        }
+
+        function startTimer() {
+            timeLeft = 10;
+            updateTimerDisplay();
+            
+            timer = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    autoNext();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const timerEl = document.getElementById(`timer${currentQuestionIndex}`);
+            if (timerEl) {
+                timerEl.textContent = `${timeLeft}s`;
+                timerEl.style.color = timeLeft <= 3 ? '#ff4757' : '#ff6b6b';
+            }
+        }
+
+        function autoNext() {
+            const q = shuffledQuestions[currentQuestionIndex];
+            if (!answers[q.id]) {
+                answers[q.id] = false;
+                showFeedback(false);
+                playSound(wrongSound);
+            }
+            setTimeout(nextQuestion, 1500);
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            showQuestion();
+        }
+
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                showQuestion();
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestionIndex) / shuffledQuestions.length) * 100;
+            document.getElementById('progress').style.width = `${progress}%`;
+        }
+
+        function showResult() {
+            document.getElementById('questionScreen').style.display = 'none';
+            document.getElementById('resultScreen').style.display = 'block';
+            
+            const percentage = Math.round((score / shuffledQuestions.length) * 100);
+            document.getElementById('finalScore').textContent = `${score}`;
+            document.getElementById('totalScore').textContent = shuffledQuestions.length;
+            
+            const scoreEl = document.getElementById('finalScore');
+            if (percentage >= 80) {
+                scoreEl.textContent += ' 🎉';
+                scoreEl.classList.add('perfect');
+            }
+            
+            document.querySelector('.result-container div[style*="font-size: 24px"]').textContent = 
+                `कुल ${shuffledQuestions.length} मा ${score} सही (${percentage}%)`;
+        }
+
+        function restartQuiz() {
+            document.getElementById('questionScreen').style.display = 'block';
+            document.getElementById('resultScreen').style.display = 'none';
+            init();
+        }
+
+        function playSound(sound) {
+            sound.currentTime = 0;
+            sound.play().catch(e => console.log('Sound play failed:', e));
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const icon = document.querySelector('.dark-toggle');
+            icon.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+        }
+
+        // Initialize quiz
+        init();
+    </script>
+</body>
+</html>
